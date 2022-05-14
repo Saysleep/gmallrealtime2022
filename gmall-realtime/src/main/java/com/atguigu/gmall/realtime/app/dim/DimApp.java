@@ -54,7 +54,7 @@ public class DimApp {
                         out.collect(jsonObject);
                     }
                 } catch (Exception e){
-                    System.out.println("发现脏数据" + value);
+                    System.out.println("发现脏数据了诶" + value);
                 }
 
             }
