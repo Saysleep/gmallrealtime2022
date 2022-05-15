@@ -1,6 +1,5 @@
 package com.atguigu.gmall.realtime.util;
 
-import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer;
 import org.apache.flink.streaming.connectors.kafka.KafkaDeserializationSchema;
@@ -18,7 +17,7 @@ import java.util.Properties;
  **/
 public class MyKafkaUtils {
 
-    private static final String BOOTSTRAP_SERVERS = "hadoop102:9092, hadoop103:9092, hadoop104:9092";
+    private static final String BOOTSTRAP_SERVERS = "hadoop102:9092,hadoop103:9092,hadoop104:9092";
     private static final String DEFAULT_TOPIC = "default_topic";
 
     public static FlinkKafkaConsumer<String> getKafkaConsumer(String topic , String groupId){
@@ -30,7 +29,7 @@ public class MyKafkaUtils {
             topic,
                 new KafkaDeserializationSchema<String>() {
                     @Override
-                    public TypeInformation getProducedType() {
+                    public TypeInformation<String> getProducedType() {
                         return TypeInformation.of(String.class);
                     }
 
@@ -43,8 +42,10 @@ public class MyKafkaUtils {
                     public String deserialize(ConsumerRecord<byte[],byte[]> consumerRecord) throws Exception {
                         if (consumerRecord == null || consumerRecord.value() == null) {
                             return null;
+                        } else{
+                            return new String(consumerRecord.value());
                         }
-                        return Arrays.toString(consumerRecord.value());
+
                     }
                 },
             properties
