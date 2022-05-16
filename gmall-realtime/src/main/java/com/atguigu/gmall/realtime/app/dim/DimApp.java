@@ -2,6 +2,7 @@ package com.atguigu.gmall.realtime.app.dim;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.atguigu.gmall.realtime.app.func.DimSinkFunction;
 import com.atguigu.gmall.realtime.app.func.TableProcess;
 import com.atguigu.gmall.realtime.bean.SourceTableProcess;
 import com.atguigu.gmall.realtime.util.MyKafkaUtils;
@@ -13,6 +14,7 @@ import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.api.common.state.MapStateDescriptor;
+import org.apache.flink.connector.jdbc.JdbcSink;
 import org.apache.flink.optimizer.operators.MapDescriptor;
 import org.apache.flink.runtime.state.hashmap.HashMapStateBackend;
 import org.apache.flink.streaming.api.CheckpointingMode;
@@ -48,7 +50,8 @@ public class DimApp {
 /*      env.setStateBackend(new HashMapStateBackend());
         env.getCheckpointConfig().setCheckpointStorage("hdfs://hadoop102:8020//1126//ck");
         env.getCheckpointConfig().enableExternalizedCheckpoints(
-                CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);*/
+                CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);
+        System.setProperty("HADOOP_USER_NAME", "atguigu");*/
 
 
         // TODO 2. 读取kafka的topic_db主题数据 创建主流
@@ -101,7 +104,10 @@ public class DimApp {
         SingleOutputStreamOperator<JSONObject> sinkDS = broadcastConnectedStream.process(new TableProcess(mapStateDescriptor));
 
         // TODO 8. 将数据写到Phoenix
-        sinkDS.print(">>>");
+        // 结果数据 : {"sinkTable":"tableName","xxx":"xxx","xxx":"xxx"}
+        //sinkDS.print(">>>");
+        sinkDS.addSink(new DimSinkFunction());
+
 
         // TODO 9. 启动任务
         env.execute();

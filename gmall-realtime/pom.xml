@@ -64,6 +64,11 @@
             <version>2.1.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.1.16</version>
+        </dependency>
 
         <!-- 如果不引入 flink-table 相关依赖，则会报错：
     Caused by: java.lang.ClassNotFoundException:

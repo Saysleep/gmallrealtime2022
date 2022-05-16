@@ -67,6 +67,9 @@ public class TableProcess extends BroadcastProcessFunction<JSONObject, String, J
 
             data.put("sinkTable",sinkTable);
             out.collect(data);
+
+        } else {
+            System.out.println("找不到对应的key");
         }
 
 
